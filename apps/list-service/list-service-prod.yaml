@@ -1,4 +1,4 @@
 image:
   repository: "ghcr.io/salix535/list-service"
-  tag: "0.2.0-9"
+  tag: "0.2.0-10"
   pullPolicy: IfNotPresent
