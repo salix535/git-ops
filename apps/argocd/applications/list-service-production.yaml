@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: list-service-production
+  namespace: argocd
+spec:
+  project: shopping-list-app
+  sources:
+    - repoURL: ghcr.io/salix535/helm-charts
+      chart: spring-boot
+      targetRevision: "1.0.1"
+      helm:
+        valueFiles:
+          - $appvalues/helm/values/base.yaml
+          - $appvalues/helm/values/production.yaml
+          - $version/apps/list-service/list-service-prod.yaml
+
+    - repoURL: https://github.com/salix535/ListService
+      targetRevision: main
+      ref: appvalues
+
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      path: apps/list-service    # deploys all yaml files in this folder including sealed-secret.yaml
+      ref: version
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: shopping-list-production
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
