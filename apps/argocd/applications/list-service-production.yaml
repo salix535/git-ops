@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: ghcr.io/salix535/helm-charts
       chart: spring-boot
-      targetRevision: "1.0.2"
+      targetRevision: "1.0.3"
       helm:
         valueFiles:
           - values.yaml
@@ -22,7 +22,7 @@ spec:
 
     - repoURL: https://github.com/salix535/git-ops
       targetRevision: main
-      path: apps/list-service    # deploys all yaml files in this folder including sealed-secret.yaml
+      path: apps/list-service/prod    # deploys all yaml files in this folder including sealed-secret.yaml
       ref: version
 
   destination:
