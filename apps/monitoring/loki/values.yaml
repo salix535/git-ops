@@ -1,0 +1,36 @@
+loki:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClassName: longhorn-single-replica
+  config:
+    retention_period: 744h   # 31 days
+
+promtail:
+  enabled: true
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+    scrape_configs:
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          # Only scrape pods with label collect-logs: "true"
+          - source_labels: [__meta_kubernetes_pod_label_collect_logs]
+            action: keep
+            regex: "true"
+          # Attach useful metadata as log labels
+          - source_labels: [__meta_kubernetes_pod_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: container
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+
+# Grafana already installed via other helm release
+grafana:
+  enabled: false
