@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: loki
+  name: promtail
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -9,19 +9,15 @@ spec:
   project: default
   sources:
     - repoURL: https://grafana.github.io/helm-charts
-      chart: loki
-      targetRevision: 6.55.0
+      chart: promtail
+      targetRevision: 6.16.6
       helm:
         valueFiles:
-          - $values/apps/monitoring/loki/values.yaml
+          - $values/apps/monitoring/promtail/values.yaml
 
     - repoURL: https://github.com/salix535/git-ops
       targetRevision: main
       ref: values
-
-    - repoURL: https://github.com/salix535/git-ops
-      targetRevision: main
-      path: apps/monitoring/loki/manifests
 
   destination:
     server: https://kubernetes.default.svc
