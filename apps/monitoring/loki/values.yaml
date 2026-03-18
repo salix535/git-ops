@@ -4,29 +4,6 @@ loki:
     enabled: true
     size: 20Gi
     storageClassName: longhorn-single-replica
-  config:
-    compactor:
-      working_directory: /data/loki/compactor
-      shared_store: filesystem
-      retention_enabled: true          # 👈 must enable this
-    limits_config:
-      retention_period: 744h           # 👈 moved here
-    schema_config:
-      configs:
-        - from: "2024-01-01"
-          store: boltdb-shipper
-          object_store: filesystem
-          schema: v11
-          index:
-            prefix: index_
-            period: 24h
-    storage_config:
-      boltdb_shipper:
-        active_index_directory: /data/loki/index
-        cache_location: /data/loki/cache
-        shared_store: filesystem
-      filesystem:
-        directory: /data/loki/chunks
 
 promtail:
   enabled: true
