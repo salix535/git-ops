@@ -36,23 +36,32 @@ promtail:
   config:
     clients:
       - url: http://loki-stack.monitoring.svc.cluster.local:3100/loki/api/v1/push
-  # 👇 this is the key — override the entire scrapeConfig at the chart level
-  scrapeConfigs: |
-    - job_name: kubernetes-pods
-      kubernetes_sd_configs:
-        - role: pod
-      relabel_configs:
-        - source_labels: [__meta_kubernetes_pod_label_collect_logs]
-          action: keep
-          regex: "true"
-        - source_labels: [__meta_kubernetes_pod_namespace]
-          target_label: namespace
-        - source_labels: [__meta_kubernetes_pod_name]
-          target_label: pod
-        - source_labels: [__meta_kubernetes_pod_container_name]
-          target_label: container
-        - source_labels: [__meta_kubernetes_pod_label_app]
-          target_label: app
+    snippets:
+      scrapeConfigs: |
+        - job_name: kubernetes-pods
+          pipeline_stages:
+            - cri: {}
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_label_collect_logs]
+              action: keep
+              regex: "true"
+            - source_labels: [__meta_kubernetes_pod_namespace]
+              target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              target_label: pod
+            - source_labels: [__meta_kubernetes_pod_container_name]
+              target_label: container
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              target_label: app
+            - action: replace
+              replacement: /var/log/pods/*$1/*.log
+              separator: /
+              source_labels:
+                - __meta_kubernetes_pod_uid
+                - __meta_kubernetes_pod_container_name
+              target_label: __path__
 
 grafana:
   enabled: false
