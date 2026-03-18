@@ -5,7 +5,28 @@ loki:
     size: 20Gi
     storageClassName: longhorn-single-replica
   config:
-    retention_period: 744h   # 31 days
+    compactor:
+      working_directory: /data/loki/compactor
+      shared_store: filesystem
+      retention_enabled: true          # 👈 must enable this
+    limits_config:
+      retention_period: 744h           # 👈 moved here
+    schema_config:
+      configs:
+        - from: "2024-01-01"
+          store: boltdb-shipper
+          object_store: filesystem
+          schema: v11
+          index:
+            prefix: index_
+            period: 24h
+    storage_config:
+      boltdb_shipper:
+        active_index_directory: /data/loki/index
+        cache_location: /data/loki/cache
+        shared_store: filesystem
+      filesystem:
+        directory: /data/loki/chunks
 
 promtail:
   enabled: true
@@ -17,11 +38,9 @@ promtail:
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
-          # Only scrape pods with label collect-logs: "true"
           - source_labels: [__meta_kubernetes_pod_label_collect_logs]
             action: keep
             regex: "true"
-          # Attach useful metadata as log labels
           - source_labels: [__meta_kubernetes_pod_namespace]
             target_label: namespace
           - source_labels: [__meta_kubernetes_pod_name]
@@ -31,6 +50,5 @@ promtail:
           - source_labels: [__meta_kubernetes_pod_label_app]
             target_label: app
 
-# Grafana already installed via other helm release
 grafana:
   enabled: false
