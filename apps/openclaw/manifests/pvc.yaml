@@ -5,7 +5,7 @@ metadata:
   labels:
     app: openclaw
 spec:
-  storageClassName: longhorn-strict-local
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
