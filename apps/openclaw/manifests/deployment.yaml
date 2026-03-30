@@ -53,6 +53,7 @@ spec:
           imagePullPolicy: IfNotPresent
           command:
             - node
+            - --max-old-space-size=1536
             - /app/dist/index.js
             - gateway
             - run
