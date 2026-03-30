@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openclaw
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          - path: /openclaw
+            pathType: Prefix
+            backend:
+              service:
+                name: openclaw
+                port:
+                  number: 18789

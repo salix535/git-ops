@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: raspberrypi
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Raspberry Pi home services applications
+  sourceRepos:
+    - https://github.com/salix535/git-ops
+    - https://bitnami-labs.github.io/sealed-secrets
+  destinations:
+    - server: https://10.0.4.11:6443
+      namespace: openclaw
+    - server: https://10.0.4.11:6443
+      namespace: sealed-secrets
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
