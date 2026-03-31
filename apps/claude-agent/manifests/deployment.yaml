@@ -16,6 +16,8 @@ spec:
       labels:
         app: claude-agent
     spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       automountServiceAccountToken: false
       securityContext:
         fsGroup: 1000
