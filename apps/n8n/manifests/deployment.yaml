@@ -38,6 +38,8 @@ spec:
               value: Europe/Belgrade
             - name: N8N_USER_FOLDER
               value: /home/node/.n8n
+            - name: N8N_PATH
+              value: /n8n/
           resources:
             requests:
               memory: 256Mi
