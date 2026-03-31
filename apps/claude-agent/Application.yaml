@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: claude-agent
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: raspberrypi
+  source:
+    repoURL: https://github.com/salix535/git-ops
+    targetRevision: main
+    path: apps/claude-agent/manifests
+  destination:
+    server: https://10.0.4.11:6443
+    namespace: claude-agent
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

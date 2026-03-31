@@ -15,6 +15,10 @@ spec:
       namespace: openclaw
     - server: https://10.0.4.11:6443
       namespace: sealed-secrets
+    - server: https://10.0.4.11:6443
+      namespace: n8n
+    - server: https://10.0.4.11:6443
+      namespace: claude-agent
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace

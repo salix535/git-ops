@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: claude-agent-config
+  labels:
+    app: claude-agent
+data:
+  config.yaml: |
+    repos:
+      - owner: salix535
+        name: list-service
+      - owner: salix535
+        name: git-ops
+    github:
+      username: salix535
+    claude:
+      max_old_space_size: 2048

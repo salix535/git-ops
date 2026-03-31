@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: claude-agent
+  labels:
+    app: claude-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: claude-agent
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: claude-agent
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: init-repos
+          image: alpine/git:2.45.2
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              cd /data/repos
+              for repo in list-service git-ops; do
+                if [ ! -d "$repo/.git" ]; then
+                  git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/salix535/${repo}.git" "$repo"
+                else
+                  cd "$repo"
+                  git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/salix535/${repo}.git"
+                  git fetch --all --prune
+                  cd /data/repos
+                fi
+              done
+          env:
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: claude-agent-secrets
+                  key: GITHUB_TOKEN
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          volumeMounts:
+            - name: repos-data
+              mountPath: /data/repos
+      containers:
+        - name: agent
+          image: ghcr.io/salix535/claude-agent:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: claude-agent-secrets
+                  key: GITHUB_TOKEN
+            - name: HOME
+              value: /home/agent
+            - name: CLAUDE_CONFIG_DIR
+              value: /home/agent/.claude
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=2048"
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 3Gi
+              cpu: "2"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: claude-home
+              mountPath: /home/agent/.claude
+            - name: repos-data
+              mountPath: /data/repos
+            - name: config
+              mountPath: /etc/claude-agent
+            - name: tmp-volume
+              mountPath: /tmp
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: claude-home
+          persistentVolumeClaim:
+            claimName: claude-home-pvc
+        - name: repos-data
+          persistentVolumeClaim:
+            claimName: repos-data-pvc
+        - name: config
+          configMap:
+            name: claude-agent-config
+        - name: tmp-volume
+          emptyDir: {}
