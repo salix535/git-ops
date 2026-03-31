@@ -40,6 +40,10 @@ spec:
               value: /home/node/.n8n
             - name: N8N_PATH
               value: /n8n/
+            - name: N8N_EDITOR_BASE_URL
+              value: http://10.0.4.150/n8n/
+            - name: WEBHOOK_URL
+              value: http://10.0.4.150/n8n/
           resources:
             requests:
               memory: 256Mi
