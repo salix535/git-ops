@@ -30,7 +30,7 @@ spec:
             - -c
             - |
               cd /data/repos
-              for repo in list-service git-ops; do
+              for repo in list-service; do
                 if [ ! -d "$repo/.git" ]; then
                   git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/salix535/${repo}.git" "$repo"
                 else
