@@ -40,6 +40,8 @@ spec:
               value: /home/node/.n8n
             - name: WEBHOOK_URL
               value: http://10.0.4.151/
+            - name: N8N_SECURE_COOKIE
+              value: "false"
           resources:
             requests:
               memory: 256Mi
