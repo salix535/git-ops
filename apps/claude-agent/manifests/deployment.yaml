@@ -32,7 +32,7 @@ spec:
             - -c
             - |
               cd /data/repos
-              for repo in ListService; do
+              for repo in test-agent-workflow; do
                 if [ ! -d "$repo/.git" ]; then
                   git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/salix535/${repo}.git" "$repo"
                 else
