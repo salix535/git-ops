@@ -50,6 +50,8 @@ spec:
               value: /home/agent/.claude
             - name: NODE_OPTIONS
               value: "--max-old-space-size=2048"
+            - name: GITHUB_BOT_LOGIN
+              value: best-clanker
           resources:
             requests:
               memory: 512Mi
