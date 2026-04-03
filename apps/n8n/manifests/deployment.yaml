@@ -39,7 +39,7 @@ spec:
             - name: N8N_USER_FOLDER
               value: /home/node/.n8n
             - name: WEBHOOK_URL
-              value: http://10.0.4.151/
+              value: https://n8n.salixenterprises.com/
             - name: N8N_SECURE_COOKIE
               value: "false"
           resources:

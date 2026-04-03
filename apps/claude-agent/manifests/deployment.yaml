@@ -23,44 +23,6 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        - name: init-repos
-          image: alpine/git:2.45.2
-          imagePullPolicy: IfNotPresent
-          command:
-            - sh
-            - -c
-            - |
-              cd /data/repos
-              for repo in test-agent-workflow; do
-                if [ ! -d "$repo/.git" ]; then
-                  git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/salix535/${repo}.git" "$repo"
-                else
-                  cd "$repo"
-                  git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/salix535/${repo}.git"
-                  git fetch --all --prune
-                  cd /data/repos
-                fi
-              done
-          env:
-            - name: GITHUB_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: claude-agent-secrets
-                  key: GITHUB_TOKEN
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-          resources:
-            requests:
-              memory: 64Mi
-              cpu: 100m
-            limits:
-              memory: 256Mi
-              cpu: 500m
-          volumeMounts:
-            - name: repos-data
-              mountPath: /data/repos
       containers:
         - name: agent
           image: ghcr.io/salix535/claude-agent:latest
@@ -70,11 +32,18 @@ spec:
               containerPort: 8000
               protocol: TCP
           env:
-            - name: GITHUB_TOKEN
+            - name: GITHUB_APP_ID
               valueFrom:
                 secretKeyRef:
                   name: claude-agent-secrets
-                  key: GITHUB_TOKEN
+                  key: GITHUB_APP_ID
+            - name: GITHUB_APP_INSTALLATION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: claude-agent-secrets
+                  key: GITHUB_APP_INSTALLATION_ID
+            - name: GITHUB_APP_KEY_PATH
+              value: /home/agent/.claude/github-app-key.pem
             - name: HOME
               value: /home/agent
             - name: CLAUDE_CONFIG_DIR
