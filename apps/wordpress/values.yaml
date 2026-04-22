@@ -13,6 +13,19 @@ service:
     http: 80
     https: 443
 
+containerPorts:
+  http: 8080
+  https: 8443
+
+wordpressAutoUpdateLevel: none
+
+livenessProbe:
+  enabled: true
+  scheme: HTTP
+readinessProbe:
+  enabled: true
+  scheme: HTTP
+
 persistence:
   enabled: true
   storageClass: local-path
