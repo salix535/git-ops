@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wordpress
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: raspberrypi
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: wordpress
+      targetRevision: "25.0.1"
+      helm:
+        valueFiles:
+          - $values/apps/wordpress/values.yaml
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      path: apps/wordpress
+      directory:
+        include: "sealed-secret*.yaml"
+  destination:
+    server: https://10.0.4.11:6443
+    namespace: wordpress
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

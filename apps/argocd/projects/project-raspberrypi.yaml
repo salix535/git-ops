@@ -10,6 +10,7 @@ spec:
   sourceRepos:
     - https://github.com/salix535/git-ops
     - https://bitnami-labs.github.io/sealed-secrets
+    - https://charts.bitnami.com/bitnami
   destinations:
     - server: https://10.0.4.11:6443
       namespace: openclaw
@@ -19,6 +20,8 @@ spec:
       namespace: n8n
     - server: https://10.0.4.11:6443
       namespace: claude-agent
+    - server: https://10.0.4.11:6443
+      namespace: wordpress
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace

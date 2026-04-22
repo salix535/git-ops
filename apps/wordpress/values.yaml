@@ -1,0 +1,48 @@
+wordpressUsername: admin
+existingSecret: wordpress-admin-secret
+
+wordpressScheme: https
+wordpressBlogName: "My Blog"
+
+replicaCount: 1
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: "10.0.4.154"
+  ports:
+    http: 80
+    https: 443
+
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 10Gi
+
+mariadb:
+  enabled: true
+  architecture: standalone
+  auth:
+    existingSecret: wordpress-mariadb-secret
+  primary:
+    persistence:
+      enabled: true
+      storageClass: local-path
+      size: 8Gi
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 768Mi
+
+ingress:
+  enabled: false
