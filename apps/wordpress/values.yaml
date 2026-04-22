@@ -1,7 +1,7 @@
 wordpressUsername: admin
 existingSecret: wordpress-admin-secret
 
-wordpressScheme: https
+wordpressScheme: http
 wordpressBlogName: "My Blog"
 
 replicaCount: 1
