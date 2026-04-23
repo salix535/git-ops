@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: open-webui
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: raspberrypi
+  sources:
+    - repoURL: https://helm.openwebui.com/
+      chart: open-webui
+      targetRevision: "14.1.0"
+      helm:
+        valueFiles:
+          - $values/apps/open-webui/values.yaml
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://10.0.4.11:6443
+    namespace: open-webui
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

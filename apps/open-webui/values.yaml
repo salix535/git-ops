@@ -1,0 +1,34 @@
+# Disable bundled Ollama - using external vLLM server
+ollama:
+  enabled: false
+
+# Disable pipelines - not needed for vLLM
+pipelines:
+  enabled: false
+
+# Disable websocket redis (single replica, not needed)
+websocket:
+  enabled: false
+
+# OpenAI-compatible API pointing to vLLM server (cross-VLAN)
+enableOpenaiApi: true
+openaiBaseApiUrls:
+  - "http://10.0.2.11:8000/v1"
+
+openaiApiKeys:
+  - "none"
+
+# Persistence for chat history and user data
+persistence:
+  enabled: true
+  size: 2Gi
+  accessModes:
+    - ReadWriteOnce
+
+# Expose via MetalLB LoadBalancer
+service:
+  type: LoadBalancer
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: "10.0.5.154"
+  port: 80
+  containerPort: 8080
