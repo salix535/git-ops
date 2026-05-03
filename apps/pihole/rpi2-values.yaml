@@ -1,0 +1,47 @@
+image:
+  tag: "2026.04.1"
+
+replicaCount: 1
+
+adminPassword: "someHardPass123"
+
+persistentVolumeClaim:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 500Mi
+
+serviceDns:
+  type: LoadBalancer
+  mixedService: true
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: "10.0.4.152"
+
+serviceWeb:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  hosts:
+    - pihole-2.lan
+  path: /
+  pathType: ImplementationSpecific
+
+extraEnvVars:
+  DNSMASQ_LISTENING: "all"
+  DNS1: "1.1.1.1"
+  DNS2: "8.8.4.4"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+nodeSelector:
+  kubernetes.io/hostname: raspberrypi2

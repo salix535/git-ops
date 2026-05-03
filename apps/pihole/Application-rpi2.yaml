@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pihole-rpi2
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://mojo2600.github.io/helm-charts/
+      chart: pihole
+      targetRevision: "2.35.0"
+      helm:
+        valueFiles:
+          - $values/apps/pihole/rpi2-values.yaml
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://10.0.4.11:6443
+    namespace: pihole
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
