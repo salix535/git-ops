@@ -22,6 +22,8 @@ spec:
       namespace: claude-agent
     - server: https://10.0.4.11:6443
       namespace: wordpress
+    - server: https://10.0.4.11:6443
+      namespace: searxng
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
