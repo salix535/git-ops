@@ -3,7 +3,10 @@ image:
 
 replicaCount: 1
 
-adminPassword: "someHardPass123"
+admin:
+  enabled: true
+  existingSecret: pihole-admin-password
+  passwordKey: password
 
 persistentVolumeClaim:
   enabled: true
