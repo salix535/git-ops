@@ -16,7 +16,7 @@ spec:
           - $values/apps/pihole/rpi3-values.yaml
     - repoURL: https://github.com/salix535/git-ops
       targetRevision: main
-      path: apps/pihole
+      path: apps/pihole/manifests
       ref: values
   destination:
     server: https://10.0.4.11:6443
