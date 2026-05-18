@@ -1,0 +1,41 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: renovate
+  namespace: argocd
+spec:
+  schedule: "0 2 * * 0"
+  timeZone: "UTC"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: renovate
+              image: renovate/renovate:38
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: GITHUB_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-github-token
+                      key: GITHUB_TOKEN
+                      optional: false
+                - name: RENOVATE_CONFIG_FILE
+                  value: "/etc/renovate/renovate.json"
+              volumeMounts:
+                - name: config
+                  mountPath: /etc/renovate
+                  readOnly: true
+          volumes:
+            - name: config
+              configMap:
+                name: renovate-config
+                items:
+                  - key: renovate.json
+                    path: renovate.json
