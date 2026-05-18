@@ -17,7 +17,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: renovate
-              image: renovate/renovate:38
+              image: renovate/renovate:43
               imagePullPolicy: IfNotPresent
               env:
                 - name: GITHUB_TOKEN
