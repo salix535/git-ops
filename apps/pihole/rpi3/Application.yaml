@@ -13,7 +13,7 @@ spec:
       targetRevision: "2.35.0"
       helm:
         valueFiles:
-          - $values/apps/pihole/rpi3-values.yaml
+          - $values/apps/pihole/rpi3/values.yaml
     - repoURL: https://github.com/salix535/git-ops
       targetRevision: main
       ref: values
