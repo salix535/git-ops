@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renovate-config
+  namespace: renovate
+data:
+  RENOVATE_PLATFORM: "github"
+  RENOVATE_REPOSITORIES: "salix535/git-ops"
+  RENOVATE_AUTODISCOVER: "false"
+  RENOVATE_ONBOARDING: "false"
+  RENOVATE_GIT_AUTHOR: "Renovate Bot <renovate@users.noreply.github.com>"
+  LOG_LEVEL: "info"

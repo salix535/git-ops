@@ -1,0 +1,43 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "Europe/Belgrade",
+  "dependencyDashboard": true,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "rebaseWhen": "conflicted",
+  "enabledManagers": ["argocd", "kubernetes", "custom.regex"],
+  "argocd": {
+    "managerFilePatterns": ["/^apps/.+/Application\\.yaml$/"]
+  },
+  "kubernetes": {
+    "managerFilePatterns": ["/^apps/.+/manifests/.+\\.ya?ml$/"]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^apps/pihole/rpi[23]/values\\.yaml$/"],
+      "matchStrings": ["image:\\s+tag:\\s*\"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "pihole/pihole",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Own artifacts - released and managed manually, outside Renovate",
+      "matchPackageNames": ["ghcr.io/salix535/**"],
+      "enabled": false
+    },
+    {
+      "description": "Pin and keep digests fresh for raw container images",
+      "matchManagers": ["kubernetes"],
+      "pinDigests": true
+    },
+    {
+      "description": "SearXNG uses date-and-githash tags (YYYY.M.D-hash)",
+      "matchPackageNames": ["searxng/searxng"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>[0-9a-f]+)$"
+    }
+  ]
+}
