@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
+  project: raspberrypi
   sources:
     - repoURL: https://mojo2600.github.io/pihole-kubernetes/
       chart: pihole

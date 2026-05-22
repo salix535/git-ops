@@ -11,6 +11,7 @@ spec:
     - https://github.com/salix535/git-ops
     - https://bitnami-labs.github.io/sealed-secrets
     - https://charts.bitnami.com/bitnami
+    - https://mojo2600.github.io/pihole-kubernetes/
   destinations:
     - server: https://10.0.4.11:6443
       namespace: openclaw
@@ -24,6 +25,8 @@ spec:
       namespace: wordpress
     - server: https://10.0.4.11:6443
       namespace: searxng
+    - server: https://10.0.4.11:6443
+      namespace: pihole
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
