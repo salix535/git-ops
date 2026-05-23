@@ -1,0 +1,38 @@
+authentik:
+  secret_key: ""           # injected via env from sealed-secret authentik-secret-key
+  error_reporting:
+    enabled: false
+  postgresql:
+    host: shared-pg-rw.postgres.svc.cluster.local
+    port: 5432
+    name: authentik
+    user: authentik
+    password: ""           # injected via env from sealed-secret authentik-pg-credentials
+
+# Bundled postgres MUST be disabled — Authentik uses the shared CNPG cluster.
+postgresql:
+  enabled: false
+
+# Secret material is supplied via env, referencing pre-existing sealed secrets.
+global:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret-key
+          key: secret-key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-credentials
+          key: password
+
+# Expose via Traefik ingress (no MetalLB LB). HTTP only for now.
+server:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - authentik.lan
+    paths:
+      - /

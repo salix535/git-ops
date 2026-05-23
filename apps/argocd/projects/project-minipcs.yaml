@@ -10,6 +10,7 @@ spec:
   sourceRepos:
     - https://github.com/salix535/git-ops
     - https://cloudnative-pg.github.io/charts
+    - https://charts.goauthentik.io
   destinations:
     - server: https://kubernetes.default.svc
       namespace: renovate
@@ -17,6 +18,8 @@ spec:
       namespace: cnpg-system
     - server: https://kubernetes.default.svc
       namespace: postgres
+    - server: https://kubernetes.default.svc
+      namespace: authentik
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
