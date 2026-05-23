@@ -9,9 +9,14 @@ spec:
   description: Mini PC cluster applications
   sourceRepos:
     - https://github.com/salix535/git-ops
+    - https://cloudnative-pg.github.io/charts
   destinations:
     - server: https://kubernetes.default.svc
       namespace: renovate
+    - server: https://kubernetes.default.svc
+      namespace: cnpg-system
+    - server: https://kubernetes.default.svc
+      namespace: postgres
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
@@ -21,3 +26,7 @@ spec:
       kind: ClusterRole
     - group: rbac.authorization.k8s.io
       kind: ClusterRoleBinding
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration

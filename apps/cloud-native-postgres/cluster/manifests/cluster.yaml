@@ -1,0 +1,83 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: shared-pg
+  namespace: postgres
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4
+
+  bootstrap:
+    initdb:
+      database: authentik   # first database — you'll add more via managed roles
+      owner: authentik
+      secret:
+        name: authentik-pg-app
+      dataChecksums: true
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS pg_stat_statements
+
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: pg-superuser
+
+  postgresql:
+    parameters:
+      shared_buffers: "512MB"
+      effective_cache_size: "1536MB"
+      work_mem: "16MB"
+      maintenance_work_mem: "128MB"
+      max_connections: "200"
+      wal_level: "replica"
+      wal_compression: "on"
+      checkpoint_completion_target: "0.9"
+      log_min_duration_statement: "1000"
+      log_checkpoints: "on"
+    pg_hba:
+      - host all all 127.0.0.1/32 scram-sha-256   # port-forward connections
+      - host all all ::1/128      scram-sha-256   # port-forward IPv6
+      - host all all 10.0.0.0/8  scram-sha-256   # in-cluster connections
+
+  affinity:
+    enablePodAntiAffinity: true
+    podAntiAffinityType: required
+    topologyKey: kubernetes.io/hostname
+
+  storage:
+    size: 20Gi
+    storageClass: longhorn-strict-local
+
+  walStorage:
+    size: 3Gi
+    storageClass: longhorn-strict-local
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+
+  # backup:
+  #   retentionPolicy: "30d"
+  #   barmanObjectStore:
+  #     destinationPath: "s3://pg-backups/shared-pg/"
+  #     endpointURL: "http://minio.minio.svc.cluster.local:9000"
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: minio-backup-creds
+  #         key: ACCESS_KEY_ID
+  #       secretAccessKey:
+  #         name: minio-backup-creds
+  #         key: ACCESS_SECRET_KEY
+  #     wal:
+  #       compression: gzip
+  #       maxParallel: 2
+  #     data:
+  #       compression: gzip
+  #       jobs: 2
+
+  failoverDelay: 0
+  primaryUpdateMethod: switchover
+  primaryUpdateStrategy: unsupervised
