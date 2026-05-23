@@ -1,0 +1,16 @@
+operator:
+  # Watch only the `mongodb` namespace for MongoDBCommunity CRs,
+  # matching today's rpi setup (operator.watchNamespace=mongodb).
+  watchNamespace: mongodb
+
+  # Chart only accepts 0 or 1; HA via multiple operator pods is not
+  # supported here. MongoDB itself stays up if the operator restarts.
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

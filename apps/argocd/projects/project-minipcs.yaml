@@ -11,6 +11,7 @@ spec:
     - https://github.com/salix535/git-ops
     - https://cloudnative-pg.github.io/charts
     - https://charts.goauthentik.io
+    - https://mongodb.github.io/helm-charts
   destinations:
     - server: https://kubernetes.default.svc
       namespace: renovate
@@ -20,6 +21,10 @@ spec:
       namespace: postgres
     - server: https://kubernetes.default.svc
       namespace: authentik
+    - server: https://kubernetes.default.svc
+      namespace: mongodb-operator
+    - server: https://kubernetes.default.svc
+      namespace: mongodb
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
