@@ -1,0 +1,77 @@
+# kube-prometheus-stack — minipc cluster, GitOps-managed via Argo.
+# Companion components (loki, promtail) live in the same namespace under their
+# own Applications and own their own resources.
+
+# -----------------------------------------------------------------------------
+# Grafana
+# -----------------------------------------------------------------------------
+grafana:
+  # Admin credentials come from a SealedSecret in this app's manifests/ dir.
+  # Do NOT set adminPassword here.
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+
+  # Persist the Grafana DB (users, API keys, alerting state) across restarts.
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: longhorn-single-replica
+    accessModes: ["ReadWriteOnce"]
+    size: 5Gi
+
+  # Sidecar that auto-discovers datasources from ConfigMaps labeled
+  # `grafana_datasource: "1"`. This picks up the existing Loki datasource
+  # ConfigMap from the `loki` Application — do not redeclare it here.
+  sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+      labelValue: "1"
+      searchNamespace: ALL
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+
+  # Host-based Traefik ingress at grafana.lan, root path. HTTP only.
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - grafana.lan
+    paths:
+      - /
+    pathType: Prefix
+
+# -----------------------------------------------------------------------------
+# Prometheus
+# -----------------------------------------------------------------------------
+prometheus:
+  prometheusSpec:
+    retention: 30d
+    retentionSize: "5GB"
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          storageClassName: longhorn-single-replica
+          resources:
+            requests:
+              storage: 10Gi
+
+# -----------------------------------------------------------------------------
+# Alertmanager
+# -----------------------------------------------------------------------------
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          storageClassName: longhorn-single-replica
+          resources:
+            requests:
+              storage: 2Gi

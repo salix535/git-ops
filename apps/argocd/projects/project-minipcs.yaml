@@ -12,6 +12,7 @@ spec:
     - https://cloudnative-pg.github.io/charts
     - https://charts.goauthentik.io
     - https://mongodb.github.io/helm-charts
+    - https://prometheus-community.github.io/helm-charts
   destinations:
     - server: https://kubernetes.default.svc
       namespace: renovate
@@ -25,6 +26,8 @@ spec:
       namespace: mongodb-operator
     - server: https://kubernetes.default.svc
       namespace: mongodb
+    - server: https://kubernetes.default.svc
+      namespace: monitoring
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
