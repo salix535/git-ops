@@ -30,6 +30,8 @@ spec:
       namespace: monitoring
     - server: https://kubernetes.default.svc
       namespace: kube-system
+    - server: https://kubernetes.default.svc
+      namespace: open-webui
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
