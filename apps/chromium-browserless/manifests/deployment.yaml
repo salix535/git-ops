@@ -53,15 +53,13 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
           livenessProbe:
-            httpGet:
-              path: /json/version
+            tcpSocket:
               port: 3000
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
           readinessProbe:
-            httpGet:
-              path: /json/version
+            tcpSocket:
               port: 3000
             initialDelaySeconds: 10
             periodSeconds: 10
