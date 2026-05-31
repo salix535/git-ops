@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: https://charts.bitnami.com/bitnami
       chart: wordpress
-      targetRevision: "30.0.13"
+      targetRevision: "31.0.2"
       helm:
         valueFiles:
           - $values/apps/wordpress/values.yaml
