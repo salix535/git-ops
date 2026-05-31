@@ -20,7 +20,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: chromium
-          image: ghcr.io/browserless/chromium:v2.49.0
+          image: ghcr.io/browserless/chromium:v2.50.1@sha256:9136b2a9d72fa03969788d78a94b984226b91f8e68c90f9b2f89e5e2caff539f
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
