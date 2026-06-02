@@ -12,6 +12,7 @@ spec:
     - https://bitnami-labs.github.io/sealed-secrets
     - https://charts.bitnami.com/bitnami
     - https://mojo2600.github.io/pihole-kubernetes/
+    - https://prometheus-community.github.io/helm-charts
   destinations:
     - server: https://10.0.4.11:6443
       namespace: openclaw
@@ -27,6 +28,10 @@ spec:
       namespace: searxng
     - server: https://10.0.4.11:6443
       namespace: pihole
+    - server: https://10.0.4.11:6443
+      namespace: monitoring
+    - server: https://10.0.4.11:6443
+      namespace: kube-system
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
@@ -36,3 +41,7 @@ spec:
       kind: ClusterRole
     - group: rbac.authorization.k8s.io
       kind: ClusterRoleBinding
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration

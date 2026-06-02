@@ -1,0 +1,90 @@
+# kube-prometheus-stack — RPi cluster (k3s), GitOps-managed via Argo.
+# No Loki/Promtail companions on this cluster.
+
+# -----------------------------------------------------------------------------
+# Grafana
+# -----------------------------------------------------------------------------
+grafana:
+  # Admin credentials come from a SealedSecret in this app's manifests/ dir.
+  # See README.md in this directory for how to seal it against the RPi
+  # sealed-secrets controller. Do NOT set adminPassword here.
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+
+  # Persist the Grafana DB (users, API keys, alerting state) across restarts.
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: local-path
+    accessModes: ["ReadWriteOnce"]
+    size: 5Gi
+
+  # Sidecars auto-discover ConfigMap-backed datasources and dashboards.
+  sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+      labelValue: "1"
+      searchNamespace: ALL
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+
+  # Host-based Traefik ingress at grafana-rpi.lan, root path. HTTP only.
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - grafana-rpi.lan
+    paths:
+      - /
+    pathType: Prefix
+
+# -----------------------------------------------------------------------------
+# Prometheus
+# -----------------------------------------------------------------------------
+prometheus:
+  prometheusSpec:
+    retention: 30d
+    retentionSize: "5GB"
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 10Gi
+
+# -----------------------------------------------------------------------------
+# Alertmanager
+# -----------------------------------------------------------------------------
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 2Gi
+
+# -----------------------------------------------------------------------------
+# k3s: disable control-plane scrapers. k3s bundles kube-controller-manager,
+# kube-scheduler, kube-proxy, and etcd into the single k3s server process,
+# so the default ServiceMonitors/endpoints don't exist and would
+# permanently alert. Dashboards for these will show empty panels.
+# -----------------------------------------------------------------------------
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
