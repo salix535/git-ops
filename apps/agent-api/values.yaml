@@ -35,6 +35,9 @@ extraVolumes:
   - name: github-app-key
     secret:
       secretName: agent-api-github-app-key
+      items:
+        - key: private-key.pem
+          path: github-app-key.pem
 
 extraVolumeMounts:
   - name: github-app-key
