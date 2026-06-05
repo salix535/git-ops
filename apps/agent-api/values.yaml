@@ -1,0 +1,122 @@
+image:
+  repository: ghcr.io/salix535/agent-api
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: ghcr-pull-secret
+
+replicaCount: 1
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: false
+  host: agent-api.internal.example.com
+
+persistence:
+  - name: claude-config
+    mountPath: /home/agent/.claude
+    size: 1Gi
+    storageClass: local-path
+  - name: hermes-data
+    mountPath: /home/agent/.hermes
+    size: 1Gi
+    storageClass: local-path
+  - name: repos
+    mountPath: /data/repos
+    size: 10Gi
+    storageClass: local-path
+
+extraVolumes:
+  - name: github-app-key
+    secret:
+      secretName: agent-api-github-app-key
+
+extraVolumeMounts:
+  - name: github-app-key
+    mountPath: /home/agent/secrets/github-app-key.pem
+    subPath: github-app-key.pem
+
+env:
+  - name: REPOS_BASE
+    value: /data/repos
+  - name: LOCAL_FILES_DIR
+    value: .local_files
+  - name: GITHUB_APP_KEY_PATH
+    value: /home/agent/secrets/github-app-key.pem
+  - name: GITHUB_BOT_LOGIN
+    value: "best-clanker"
+  - name: GIT_USER_NAME
+    value: Best Clanker
+  - name: GIT_USER_EMAIL
+    value: agent-api@salix535.github.io
+  - name: CLAUDE_HOME
+    value: /home/agent
+  - name: CLAUDE_CONFIG_DIR
+    value: /home/agent/.claude
+  - name: HERMES_CONFIG_DIR
+    value: /home/agent/.hermes
+  - name: HERMES_TIMEOUT_S
+    value: "60000"
+  - name: RENOVATE_DEFAULT_BACKEND
+    value: claude
+  - name: OPENAI_BASE_URL
+    value: http://10.0.2.11:11434
+  - name: OPENAI_API_KEY
+    value: "ollama"
+  - name: HERMES_MODEL
+    value: "qwen3-coder-next:q4_K_M"
+
+envValueFrom:
+  - name: GITHUB_APP_ID
+    valueFrom:
+      secretKeyRef:
+        name: agent-api-secrets
+        key: github-app-id
+  - name: GITHUB_APP_INSTALLATION_ID
+    valueFrom:
+      secretKeyRef:
+        name: agent-api-secrets
+        key: github-app-installation-id
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop: ["ALL"]
+
+strategy:
+  type: Recreate
+
+terminationGracePeriodSeconds: 600
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "200m"
+  limits:
+    memory: "3Gi"
+    cpu: "2000m"
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10

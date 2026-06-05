@@ -13,6 +13,7 @@ spec:
     - https://charts.bitnami.com/bitnami
     - https://mojo2600.github.io/pihole-kubernetes/
     - https://prometheus-community.github.io/helm-charts
+    - ghcr.io/salix535/helm-charts
   destinations:
     - server: https://10.0.4.11:6443
       namespace: openclaw
@@ -22,6 +23,8 @@ spec:
       namespace: n8n
     - server: https://10.0.4.11:6443
       namespace: claude-agent
+    - server: https://10.0.4.11:6443
+      namespace: agent-api
     - server: https://10.0.4.11:6443
       namespace: wordpress
     - server: https://10.0.4.11:6443
