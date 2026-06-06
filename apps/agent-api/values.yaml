@@ -72,7 +72,7 @@ env:
   - name: OPENAI_API_KEY
     value: "ollama"
   - name: HERMES_MODEL
-    value: "frob/qwen3-coder-next:80b-a3b-q6_K"
+    value: "qwen3-coder-next:q4_K_M"
 
 envValueFrom:
   - name: GITHUB_APP_ID
