@@ -17,7 +17,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: renovate
-              image: renovate/renovate:43@sha256:436f8141e24268342921d14aa7f5a22ef7f85e4e65ece12c3447769189ff3b10
+              image: renovate/renovate:43@sha256:94ea97399b0dfba2e42b9571fc5bca6e1fbf5e72ecf6062cfe6aba5bec76b19e
               imagePullPolicy: IfNotPresent
               envFrom:
                 - configMapRef:
