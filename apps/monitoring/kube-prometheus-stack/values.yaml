@@ -16,6 +16,7 @@ grafana:
   # Persist the Grafana DB (users, API keys, alerting state) across restarts.
   deploymentStrategy:
     type: Recreate
+    rollingUpdate: null
 
   persistence:
     enabled: true
