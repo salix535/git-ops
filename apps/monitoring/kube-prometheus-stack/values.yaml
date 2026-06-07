@@ -14,6 +14,9 @@ grafana:
     passwordKey: admin-password
 
   # Persist the Grafana DB (users, API keys, alerting state) across restarts.
+  deploymentStrategy:
+    type: Recreate
+
   persistence:
     enabled: true
     type: pvc
