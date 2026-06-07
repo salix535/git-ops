@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: searxng
-          image: searxng/searxng:2026.5.31-300695de5@sha256:75e85884da87a717655d6313421c8fb42aede84219b06873311179ae830ab396
+          image: searxng/searxng:2026.6.7-70de3cc56@sha256:1d640e3c9b3757a9db56e7893ebd11fe78cd1e81d1b3aaa6f64d35bf397dd2ea
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
