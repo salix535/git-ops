@@ -26,7 +26,7 @@ spec:
             - name: nova
               image: us-docker.pkg.dev/fairwinds-ops/oss/nova:v3.12.0
               imagePullPolicy: IfNotPresent
-              command: ["nova"]
+              command: ["/nova"]
               args:
                 - "--format=json"
                 - "find"
