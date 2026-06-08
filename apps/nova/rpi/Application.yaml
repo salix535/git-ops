@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/salix535/git-ops
     targetRevision: main
-    path: apps/nova/manifests
+    path: apps/nova/rpi
   destination:
     server: https://10.0.4.11:6443
     namespace: update-monitoring

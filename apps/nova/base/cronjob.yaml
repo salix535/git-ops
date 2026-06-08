@@ -1,0 +1,99 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nova-scan
+  namespace: update-monitoring
+spec:
+  schedule: "0 14 * * 6"
+  timeZone: "Europe/Belgrade"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          serviceAccountName: nova
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            fsGroup: 65532
+            seccompProfile:
+              type: RuntimeDefault
+          initContainers:
+            - name: nova
+              image: us-docker.pkg.dev/fairwinds-ops/oss/nova:v3.12.0
+              imagePullPolicy: IfNotPresent
+              command: ["/nova"]
+              args:
+                - "--format=json"
+                - "--output-file=/results/nova.json"
+                - "find"
+                - "--helm"
+                - "--containers"
+                - "--show-old"
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+                - name: results
+                  mountPath: /results
+          containers:
+            - name: webhook
+              image: curlimages/curl:8.16.0
+              imagePullPolicy: IfNotPresent
+              command: ["sh", "-c"]
+              args:
+                - >-
+                  curl --fail --silent --show-error
+                  --max-time 30 --retry 3 --retry-delay 5
+                  -X POST
+                  -H "Content-Type: application/json"
+                  -H "auth_token: $N8N_AUTH_TOKEN"
+                  --data-binary @/results/nova.json
+                  "$N8N_WEBHOOK_URL"
+              env:
+                - name: N8N_WEBHOOK_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: nova-webhook
+                      key: url
+                - name: N8N_AUTH_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: nova-webhook
+                      key: auth_token
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 16Mi
+                limits:
+                  cpu: 100m
+                  memory: 64Mi
+              volumeMounts:
+                - name: results
+                  mountPath: /results
+                  readOnly: true
+          volumes:
+            - name: tmp
+              emptyDir: {}
+            - name: results
+              emptyDir: {}

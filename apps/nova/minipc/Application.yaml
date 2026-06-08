@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/salix535/git-ops
     targetRevision: main
-    path: apps/nova/manifests
+    path: apps/nova/minipc
   destination:
     server: https://kubernetes.default.svc
     namespace: update-monitoring
