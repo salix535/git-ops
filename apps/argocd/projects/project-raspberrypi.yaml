@@ -35,6 +35,8 @@ spec:
       namespace: monitoring
     - server: https://10.0.4.11:6443
       namespace: kube-system
+    - server: https://10.0.4.11:6443
+      namespace: update-monitoring
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
