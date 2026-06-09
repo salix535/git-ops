@@ -21,6 +21,21 @@
       "depNameTemplate": "pihole/pihole",
       "datasourceTemplate": "docker",
       "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^apps/system-upgrade-controller/manifests/plan-k3s-.+\\.yaml$/"],
+      "matchStrings": ["version:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+\\+k3s\\d+)"],
+      "depNameTemplate": "k3s-io/k3s",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^(?<version>v\\d+\\.\\d+\\.\\d+\\+k3s\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^apps/system-upgrade-controller/manifests/kustomization\\.yaml$/"],
+      "matchStrings": ["github\\.com/rancher/system-upgrade-controller/releases/download/(?<currentValue>v\\d+\\.\\d+\\.\\d+)/"],
+      "depNameTemplate": "rancher/system-upgrade-controller",
+      "datasourceTemplate": "github-releases"
     }
   ],
   "packageRules": [
@@ -38,6 +53,16 @@
       "description": "SearXNG uses date-and-githash tags (YYYY.M.D-hash)",
       "matchPackageNames": ["searxng/searxng"],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>[0-9a-f]+)$"
+    },
+    {
+      "description": "Group k3s server + agent Plans into a single PR",
+      "matchPackageNames": ["k3s-io/k3s"],
+      "groupName": "k3s"
+    },
+    {
+      "description": "Group both SUC manifest URLs (crd.yaml + controller) into a single PR",
+      "matchPackageNames": ["rancher/system-upgrade-controller"],
+      "groupName": "system-upgrade-controller"
     }
   ]
 }
