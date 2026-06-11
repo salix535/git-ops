@@ -16,9 +16,9 @@ spec:
       - key: node-role.kubernetes.io/control-plane
         operator: DoesNotExist
   prepare:
-    image: rancher/k3s-upgrade
+    image: rancher/k3s-upgrade@sha256:e54a34f08be4acd0a77db2c173fe6768b62eff8656a6f2e839495602424d4ec4
     args: ["prepare", "k3s-server"]
   serviceAccountName: system-upgrade
   upgrade:
-    image: rancher/k3s-upgrade
+    image: rancher/k3s-upgrade@sha256:e54a34f08be4acd0a77db2c173fe6768b62eff8656a6f2e839495602424d4ec4
   version: v1.36.1+k3s1
