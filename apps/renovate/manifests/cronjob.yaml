@@ -61,7 +61,7 @@ spec:
                   mountPath: /token
           containers:
             - name: renovate
-              image: renovate/renovate:43@sha256:5dc5e19e1dbba656e0a8672d12e59305a992810da8d5460e5bc1706919193a74
+              image: renovate/renovate:43@sha256:80b639fd0e421c09ee7b5140f4eeed43e1ff7c4ba1e471e17fbe06d1e4d5d4a7
               imagePullPolicy: IfNotPresent
               command: ["/bin/sh", "-c"]
               args:
