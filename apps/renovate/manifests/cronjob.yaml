@@ -15,19 +15,64 @@ spec:
       template:
         spec:
           restartPolicy: Never
+          volumes:
+            - name: app-key
+              secret:
+                secretName: renovate-github-app
+            - name: token
+              emptyDir: {}
+          initContainers:
+            - name: mint-token
+              image: alpine:3.20
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+                  apk add --no-cache curl jq openssl >/dev/null
+                  NOW=$(date +%s); IAT=$((NOW - 60)); EXP=$((NOW + 540))
+                  b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+                  HEADER=$(printf '{"alg":"RS256","typ":"JWT"}' | b64url)
+                  PAYLOAD=$(printf '{"iat":%d,"exp":%d,"iss":"%s"}' "$IAT" "$EXP" "$APP_ID" | b64url)
+                  SIG=$(printf '%s.%s' "$HEADER" "$PAYLOAD" \
+                    | openssl dgst -sha256 -sign /keys/private-key.pem -binary | b64url)
+                  JWT="$HEADER.$PAYLOAD.$SIG"
+                  curl -sfS -X POST \
+                    -H "Authorization: Bearer $JWT" \
+                    -H "Accept: application/vnd.github+json" \
+                    "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens" \
+                    | jq -r .token > /token/value
+                  test -s /token/value
+              env:
+                - name: APP_ID
+                  valueFrom:
+                    configMapKeyRef:
+                      name: renovate-config
+                      key: RENOVATE_GITHUB_APP_ID
+                - name: INSTALLATION_ID
+                  valueFrom:
+                    configMapKeyRef:
+                      name: renovate-config
+                      key: RENOVATE_GITHUB_INSTALLATION_ID
+              volumeMounts:
+                - name: app-key
+                  mountPath: /keys
+                  readOnly: true
+                - name: token
+                  mountPath: /token
           containers:
             - name: renovate
               image: renovate/renovate:43@sha256:5dc5e19e1dbba656e0a8672d12e59305a992810da8d5460e5bc1706919193a74
               imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - 'export RENOVATE_TOKEN=$(cat /token/value); exec renovate'
               envFrom:
                 - configMapRef:
                     name: renovate-config
-              env:
-                - name: RENOVATE_TOKEN
-                  valueFrom:
-                    secretKeyRef:
-                      name: renovate-github-token
-                      key: GITHUB_TOKEN
+              volumeMounts:
+                - name: token
+                  mountPath: /token
+                  readOnly: true
               resources:
                 requests:
                   cpu: 100m

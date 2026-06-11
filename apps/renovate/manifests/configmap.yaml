@@ -8,6 +8,7 @@ data:
   RENOVATE_REPOSITORIES: "salix535/git-ops"
   RENOVATE_AUTODISCOVER: "false"
   RENOVATE_ONBOARDING: "false"
-  RENOVATE_GIT_AUTHOR: "Renovate Bot <renovate@users.noreply.github.com>"
+  RENOVATE_GITHUB_APP_ID: "4029949"
+  RENOVATE_GITHUB_INSTALLATION_ID: "139656487"
   LOG_LEVEL: "info"
   NODE_OPTIONS: "--max-old-space-size=2048"
