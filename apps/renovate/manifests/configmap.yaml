@@ -5,7 +5,7 @@ metadata:
   namespace: renovate
 data:
   RENOVATE_PLATFORM: "github"
-  RENOVATE_REPOSITORIES: "salix535/git-ops"
+  RENOVATE_REPOSITORIES: "salix535/git-ops,salix535/claude-agent,salix535/LocalInfra"
   RENOVATE_AUTODISCOVER: "false"
   RENOVATE_ONBOARDING: "false"
   RENOVATE_GITHUB_APP_ID: "4029949"
