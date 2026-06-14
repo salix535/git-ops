@@ -13,9 +13,17 @@ spec:
       targetRevision: 0.16.1
       helm:
         releaseName: metallb
+        valueFiles:
+          - $values/apps/metallb/rpi/values.yaml
+
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      ref: values
+
     - repoURL: https://github.com/salix535/git-ops
       targetRevision: main
       path: apps/metallb/rpi/manifests
+
   destination:
     server: https://10.0.4.11:6443
     namespace: metallb-system
