@@ -21,10 +21,10 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik-public
-  # Intentionally no automated sync: first sync is a manual adoption from
-  # the existing helm-cli release. Flip to {prune: true, selfHeal: true}
-  # once the initial diff is verified to be safe.
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
