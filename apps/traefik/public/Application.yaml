@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik-public
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: minipcs
+  sources:
+    - repoURL: https://traefik.github.io/charts
+      chart: traefik
+      targetRevision: 40.2.0
+      helm:
+        releaseName: traefik-public
+        valueFiles:
+          - $values/apps/traefik/public/values.yaml
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik-public
+  # Intentionally no automated sync: first sync is a manual adoption from
+  # the existing helm-cli release. Flip to {prune: true, selfHeal: true}
+  # once the initial diff is verified to be safe.
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

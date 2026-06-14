@@ -1,0 +1,13 @@
+ingressClass:
+  enabled: true
+  isDefaultClass: false
+  name: traefik-public
+providers:
+  kubernetesCRD:
+    ingressClass: traefik-public
+  kubernetesIngress:
+    ingressClass: traefik-public
+service:
+  type: LoadBalancer
+  annotations:
+    metallb.io/loadBalancerIPs: 10.0.5.155
