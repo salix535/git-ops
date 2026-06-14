@@ -28,6 +28,9 @@ spec:
     server: https://10.0.4.11:6443
     namespace: metallb-system
   syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
