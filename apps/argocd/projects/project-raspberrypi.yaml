@@ -14,6 +14,7 @@ spec:
     - https://mojo2600.github.io/pihole-kubernetes/
     - https://prometheus-community.github.io/helm-charts
     - ghcr.io/salix535/helm-charts
+    - https://metallb.github.io/metallb
   destinations:
     - server: https://10.0.4.11:6443
       namespace: openclaw
@@ -39,6 +40,8 @@ spec:
       namespace: update-monitoring
     - server: https://10.0.4.11:6443
       namespace: system-upgrade
+    - server: https://10.0.4.11:6443
+      namespace: metallb-system
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
