@@ -9,7 +9,7 @@ spec:
   description: Raspberry Pi home services applications
   sourceRepos:
     - https://github.com/salix535/git-ops
-    - https://bitnami-labs.github.io/sealed-secrets
+    - https://bitnami.github.io/sealed-secrets
     - https://charts.bitnami.com/bitnami
     - https://mojo2600.github.io/pihole-kubernetes/
     - https://prometheus-community.github.io/helm-charts
