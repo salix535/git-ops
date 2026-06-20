@@ -4,7 +4,7 @@ metadata:
   name: nova-scan
   namespace: update-monitoring
 spec:
-  schedule: "0 14 * * 6"
+  schedule: "0 14 1,15 * *"
   timeZone: "Europe/Belgrade"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
