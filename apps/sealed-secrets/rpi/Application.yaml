@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://bitnami.github.io/sealed-secrets
     chart: sealed-secrets
-    targetRevision: 2.18.6
+    targetRevision: 2.19.0
   destination:
     server: https://10.0.4.11:6443
     namespace: sealed-secrets
