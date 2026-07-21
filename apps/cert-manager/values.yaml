@@ -1,0 +1,35 @@
+# cert-manager Helm values.
+# CRDs are managed by Helm (crds.enabled) and retained on uninstall
+# (crds.keep) so removing the chart never deletes issued-cert state.
+crds:
+  enabled: true
+  keep: true
+
+# Single controller pod is plenty for a homelab cluster.
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+webhook:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+cainjector:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi

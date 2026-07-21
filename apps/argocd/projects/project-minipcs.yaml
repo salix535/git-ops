@@ -16,6 +16,9 @@ spec:
     - https://bitnami.github.io/sealed-secrets
     - https://traefik.github.io/charts
     - https://metallb.github.io/metallb
+    - https://charts.jetstack.io
+    - https://github.com/salix535/ListService
+    - ghcr.io/salix535/helm-charts
   destinations:
     - server: https://kubernetes.default.svc
       namespace: renovate
@@ -43,6 +46,10 @@ spec:
       namespace: traefik-public
     - server: https://kubernetes.default.svc
       namespace: metallb-system
+    - server: https://kubernetes.default.svc
+      namespace: cert-manager
+    - server: https://kubernetes.default.svc
+      namespace: shopping-list-production
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
