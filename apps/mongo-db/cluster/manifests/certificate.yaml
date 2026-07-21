@@ -1,0 +1,37 @@
+# Leaf TLS cert for mongod, signed by the local mongodb-ca-issuer.
+#
+# Prod scope is TLS-only (no LAN exposure), so the SANs cover ONLY the internal
+# replica-set member names used for in-cluster client + member-to-member TLS.
+# (If LAN exposure via replicaSetHorizons is added later, append the external
+# mongo-N.lan names here and wire the horizons + LoadBalancer services.)
+#
+# A public CA (Let's Encrypt) cannot sign the .svc.cluster.local names, which
+# is why this is a private CA -- see mongodb-kubernetes-operator #893.
+#
+# cert-manager writes the result into secret `mongodb-tls` with keys
+# tls.crt / tls.key / ca.crt, and auto-renews before expiry.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mongodb-rs-tls
+  namespace: mongodb
+  annotations:
+    # Inner wave -1: leaf cert issues after the CA chain (-3/-2) and before
+    # the MongoDBCommunity CR (wave 0), so mongodb-tls exists on fresh install.
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  secretName: mongodb-tls
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: mongodb-ca-issuer
+    kind: Issuer
+  dnsNames:
+    # internal — replica-set member-to-member + in-cluster client TLS
+    - mongodb-rs-0.mongodb-rs-svc.mongodb.svc.cluster.local
+    - mongodb-rs-1.mongodb-rs-svc.mongodb.svc.cluster.local
+    - mongodb-rs-2.mongodb-rs-svc.mongodb.svc.cluster.local
+    - mongodb-rs-svc.mongodb.svc.cluster.local

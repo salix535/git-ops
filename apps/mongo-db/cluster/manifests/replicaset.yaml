@@ -11,7 +11,19 @@ spec:
   security:
     authentication:
       modes: ["SCRAM"]
+    tls:
+      enabled: true
+      # preferTLS: mongod accepts BOTH TLS and plaintext, so any existing
+      # plaintext clients keep working. list-service connects over TLS via
+      # mongodb+srv (driver defaults tls=true) trusting the private CA.
+      optional: true
+      certificateKeySecretRef:
+        name: mongodb-tls   # cert-manager secret: tls.crt + tls.key
+      caCertificateSecretRef:
+        name: mongodb-tls   # same secret also carries ca.crt
 
+  # NOTE: the shopping_app user is created MANUALLY on this cluster (not via
+  # this CR), so it is intentionally absent from spec.users.
   users:
     - name: admin
       db: admin
