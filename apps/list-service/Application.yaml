@@ -15,7 +15,7 @@ spec:
   sources:
     - repoURL: ghcr.io/salix535/helm-charts
       chart: spring-boot
-      targetRevision: "1.0.8"
+      targetRevision: "1.0.9"
       helm:
         valueFiles:
           - $appvalues/helm/values/base.yaml

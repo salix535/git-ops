@@ -8,10 +8,9 @@ image:
   tag: "0.2.0-47"          # build that includes MongoTlsConfig (shared w/ test)
   pullPolicy: IfNotPresent
 
-# Both the private (traefik) and public (traefik-public) ingress use the same
-# host, list-service.lan, at root path. The chart (>= 1.0.8) applies
-# ingress.host to both blocks. Pihole: list-service.lan -> private traefik LB
-# IP (10.0.5.150).
+# Private: host-based at root -> list-service.lan/ (traefik, no stripPrefix).
+# Public: host-less subpath -> /list-service (traefik-public, stripPrefix), as
+# before. chart >= 1.0.9 routes each ingress independently.
 ingress:
   enabled: true
   host: "list-service.lan"
@@ -19,6 +18,9 @@ ingress:
   stripPrefix: false
   public:
     enabled: true
+    host: ""
+    path: "/list-service"
+    stripPrefix: true
 
 config:
   # Prod private CA (mongodb-rs-homelab-ca, minipc cluster). base64-encoded PEM;
