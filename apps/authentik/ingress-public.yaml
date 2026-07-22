@@ -1,0 +1,25 @@
+# Public-facing ingress on the traefik-public controller (separate LB IP 10.0.5.155).
+# Reachable only from the RPi/cloudflared VLAN via inter-VLAN ACL; internet path is
+# Cloudflare -> cloudflared (RPi) -> traefik-public. cloudflared preserves the original
+# Host header (authentik.salixenterprises.com), so Authentik builds correct redirect URLs.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: authentik-server-public
+  namespace: authentik
+spec:
+  ingressClassName: traefik-public
+  tls:
+    - hosts:
+        - authentik.salixenterprises.com   # served with Traefik's default cert (cloudflared uses noTLSVerify)
+  rules:
+    - host: authentik.salixenterprises.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: authentik-server
+                port:
+                  number: 80

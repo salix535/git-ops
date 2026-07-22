@@ -23,7 +23,7 @@ spec:
       targetRevision: main
       path: apps/authentik
       directory:
-        include: "sealed-secret*.yaml"
+        include: "{sealed-secret*.yaml,ingress-public.yaml}"
   destination:
     server: https://kubernetes.default.svc
     namespace: authentik
