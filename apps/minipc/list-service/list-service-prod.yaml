@@ -5,7 +5,7 @@
 # CA (for the app's MongoTlsConfig), and host-based LAN ingress.
 image:
   repository: "ghcr.io/salix535/list-service"
-  tag: "0.2.0-49"
+  tag: "0.2.0-50"
   pullPolicy: IfNotPresent
 
 # Private: host-based at root -> list-service.lan/ (traefik, no stripPrefix).
