@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: agent-api
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: raspberrypi
+  sources:
+    - repoURL: ghcr.io/salix535/helm-charts
+      chart: python-app
+      targetRevision: "1.0.0"
+      helm:
+        valueFiles:
+          - $gitops/apps/raspberry-pi/agent-api/values.yaml
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      ref: gitops
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      path: apps/raspberry-pi/agent-api/manifests
+  destination:
+    server: https://10.0.4.11:6443
+    namespace: agent-api
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

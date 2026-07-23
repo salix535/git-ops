@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"   # after cnpg-cluster (wave 1) so shared-pg exists
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: minipcs
+  sources:
+    - repoURL: https://charts.goauthentik.io
+      chart: authentik
+      targetRevision: 2026.5.5
+      helm:
+        valueFiles:
+          - $values/apps/minipc/authentik/values.yaml
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/salix535/git-ops
+      targetRevision: main
+      path: apps/minipc/authentik
+      directory:
+        include: "{sealed-secret*.yaml,ingress-public.yaml}"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: authentik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

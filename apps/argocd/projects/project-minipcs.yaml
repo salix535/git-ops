@@ -19,6 +19,8 @@ spec:
     - https://charts.jetstack.io
     - https://github.com/salix535/ListService
     - ghcr.io/salix535/helm-charts
+    - https://grafana.github.io/helm-charts
+    - https://helm.openwebui.com/
   destinations:
     - server: https://kubernetes.default.svc
       namespace: renovate

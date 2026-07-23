@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cnpg-cluster
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"   # syncs after the operator (wave 0)
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: minipcs
+  source:
+    repoURL: https://github.com/salix535/git-ops
+    targetRevision: main
+    path: apps/minipc/cloud-native-postgres/cluster/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: postgres
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    # CNPG writes its own defaults back into the Cluster .spec (encoding, logLevel,
+    # extra postgresql.parameters, etc.). Without this, Argo sees permanent drift
+    # and selfHeal fights the operator. Not an adoption hack — needed on any
+    # CNPG + Argo setup because the operator mutates the CR it is given.
+    - group: postgresql.cnpg.io
+      kind: Cluster
+      name: shared-pg
+      namespace: postgres
+      managedFieldsManagers:
+        - cloudnative-pg
